@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  run-app:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -14,5 +14,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run the app
-        run: python app.py
+      - name: Install dependencies
+        run: pip install pytest pytest-cov
+
+      - name: Run tests with coverage
+        run: pytest --cov=app --cov-report=term-missing
