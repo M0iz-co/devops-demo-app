@@ -4,13 +4,31 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.11'
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAndTest
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+    - script: pip install pytest pytest-cov
+      displayName: 'Install dependencies'
+    - script: pytest --cov=app --cov-report=term-missing
+      displayName: 'Run tests with coverage'
 
-- script: pip install pytest pytest-cov
-  displayName: 'Install dependencies'
+- stage: DeployDev
+  dependsOn: Build
+  jobs:
+  - job: DeployToDev
+    steps:
+    - script: echo "Deploying devops-demo-app:v1 to Dev environment"
+      displayName: 'Deploy to Dev (placeholder)'
 
-- script: pytest --cov=app --cov-report=term-missing
-  displayName: 'Run tests with coverage'
+- stage: DeployProd
+  dependsOn: DeployDev
+  jobs:
+  - job: DeployToProd
+    steps:
+    - script: echo "Deploying devops-demo-app:v1 to Prod environment"
+      displayName: 'Deploy to Prod (placeholder)'
